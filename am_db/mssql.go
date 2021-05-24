@@ -41,5 +41,6 @@ func GetMssqlConfigMapper() []ammodel.ConfigMapper {
 	var mappers []ammodel.ConfigMapper
 	db.Limit(10).Order("id asc").Find(&mappers)
 
+	log.Println("获取", len(mappers), "条数据")
 	return mappers
 }

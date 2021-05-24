@@ -2,33 +2,45 @@ package amapi
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"net/http/httputil"
 	"strings"
+	"time"
 
 	amdb "atom_micro/am_db"
 	ammodel "atom_micro/am_model"
 
 	"github.com/gin-gonic/gin"
+	"github.com/patrickmn/go-cache"
 )
 
-func StartGateWayApi() {
-	engin := gin.Default()
-	engin.GET("/*url", serveHttp)
-	engin.POST("/*url", serveHttp)
+var gcc *cache.Cache = cache.New(5*time.Minute, 10*time.Minute)
 
-	//add more
+// StartGateWayAPI 启动服务
+func StartGateWayAPI() {
+	engin := gin.Default()
+	engin.GET("/*url", serveHTTP)
+	engin.POST("/*url", serveHTTP)
+
 	go http.ListenAndServe(":2901", engin)
 }
 
-func serveHttp(c *gin.Context) {
+func serveHTTP(c *gin.Context) {
 
 	path := c.Request.URL.Path
 	fmt.Println("请求路径", path)
 
-	mps := amdb.GetMssqlConfigMapper()
-	log.Println("长度：", len(mps))
+	var mps []ammodel.ConfigMapper
+
+	foo, found := gcc.Get("mssql-mappers")
+	if found {
+		mps = foo.([]ammodel.ConfigMapper)
+		fmt.Println("found:", mps)
+	} else {
+		mps := amdb.GetMssqlConfigMapper()
+		gcc.Set("mssql-mappers", &mps, cache.DefaultExpiration)
+		fmt.Println("not found:", mps)
+	}
 
 	var mapped ammodel.ConfigMapper
 	for _, v := range mps {

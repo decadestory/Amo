@@ -54,7 +54,7 @@ func selServsToStart(filterStr string) {
 
 		switch v {
 		case "gateway":
-			amapi.StartGateWayApi()
+			amapi.StartGateWayAPI()
 		case "log":
 			amapi.StartLogApi()
 		case "config":
