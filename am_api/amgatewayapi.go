@@ -1,6 +1,7 @@
 package amapi
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httputil"
@@ -14,7 +15,7 @@ import (
 	"github.com/patrickmn/go-cache"
 )
 
-var gcc *cache.Cache = cache.New(5*time.Minute, 10*time.Minute)
+var gcc *cache.Cache = cache.New(5*time.Minute, 5*time.Minute)
 
 // StartGateWayAPI 启动服务
 func StartGateWayAPI() {
@@ -31,15 +32,15 @@ func serveHTTP(c *gin.Context) {
 	fmt.Println("请求路径", path)
 
 	var mps []ammodel.ConfigMapper
-
 	foo, found := gcc.Get("mssql-mappers")
 	if found {
-		mps = foo.([]ammodel.ConfigMapper)
-		fmt.Println("found:", mps)
+		fmt.Println("found:", foo.(string))
+		json.Unmarshal([]byte(foo.(string)), &mps)
 	} else {
-		mps := amdb.GetMssqlConfigMapper()
-		gcc.Set("mssql-mappers", &mps, cache.DefaultExpiration)
-		fmt.Println("not found:", mps)
+		mps = amdb.GetMssqlConfigMapper()
+		mpsJson, _ := json.Marshal(mps)
+		gcc.Set("mssql-mappers", string(mpsJson), cache.DefaultExpiration)
+		fmt.Println("not found:", string(mpsJson))
 	}
 
 	var mapped ammodel.ConfigMapper
