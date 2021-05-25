@@ -1,0 +1,2 @@
+# Amo
+go micro service
