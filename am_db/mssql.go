@@ -53,3 +53,21 @@ func AddApiLog(lg ammodel.LogAmInterface) {
 	}
 	db.Create(&lg)
 }
+
+// 添加业务日志
+func AddBusLog(lg ammodel.LogAmBus) {
+	db, err := gorm.Open(sqlserver.Open(connString), &gorm.Config{})
+	if err != nil {
+		log.Fatal("Open connection failed:", err.Error())
+	}
+	db.Create(&lg)
+}
+
+// 添加错误日志
+func AddErrorLog(lg ammodel.LogAmError) {
+	db, err := gorm.Open(sqlserver.Open(connString), &gorm.Config{})
+	if err != nil {
+		log.Fatal("Open connection failed:", err.Error())
+	}
+	db.Create(&lg)
+}
