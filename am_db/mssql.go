@@ -31,16 +31,25 @@ func init() {
 }
 
 // 获取映射
-func GetMssqlConfigMapper() []ammodel.ConfigMapper {
+func GetMssqlAmConfigMapper() []ammodel.AmConfigMapper {
 
 	db, err := gorm.Open(sqlserver.Open(connString), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Open connection failed:", err.Error())
 	}
 
-	var mappers []ammodel.ConfigMapper
+	var mappers []ammodel.AmConfigMapper
 	db.Limit(10).Order("id asc").Find(&mappers)
 
 	log.Println("获取", len(mappers), "条数据")
 	return mappers
+}
+
+// 添加接口日志
+func AddApiLog(lg ammodel.LogAmInterface) {
+	db, err := gorm.Open(sqlserver.Open(connString), &gorm.Config{})
+	if err != nil {
+		log.Fatal("Open connection failed:", err.Error())
+	}
+	db.Create(&lg)
 }
