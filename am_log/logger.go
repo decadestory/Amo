@@ -18,10 +18,10 @@ func init() {
 
 func LogApi(path, params string, excuteTime int) {
 	lg := ammodel.LogAmInterface{
-		LogPath: path, 
-		Parameter: params,
-		ExecuteTime: excuteTime, 
-		AddTime: time.Now()
+		LogPath:     path,
+		Parameter:   params,
+		ExecuteTime: excuteTime,
+		AddTime:     time.Now(),
 	}
 	chanapi <- lg
 }
@@ -45,7 +45,7 @@ func LogBus(srcGId, srcId, logLevel int, logType, logPath, logInfo, extInfo1, ex
 		LogInfo:  logInfo,
 		ExtInfo1: extInfo1,
 		ExtInfo2: extInfo2,
-		AddTime:  time.Now()
+		AddTime:  time.Now(),
 	}
 	chanbus <- lg
 }
@@ -69,7 +69,7 @@ func LogError(srcGId, srcId, logLevel int, logType, logPath, logInfo, extInfo1, 
 		LogInfo:  logInfo,
 		ExtInfo1: extInfo1,
 		ExtInfo2: extInfo2,
-		AddTime:  time.Now()
+		AddTime:  time.Now(),
 	}
 	chanError <- lg
 }
