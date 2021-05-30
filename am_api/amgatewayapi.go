@@ -40,7 +40,7 @@ func serveHTTP(c *gin.Context) {
 	defer logger.LogApi(path, string(data), int(elapsed))
 
 	//缓存
-	var mps []ammodel.AmConfigMapper
+	var mps []ammodel.AmProxyMapper
 	foo, found := gcc.Get("proxy-mappers")
 	if found {
 		fmt.Println("found!!")
@@ -53,7 +53,7 @@ func serveHTTP(c *gin.Context) {
 	}
 
 	//查询映射
-	var mapped ammodel.AmConfigMapper
+	var mapped ammodel.AmProxyMapper
 	for _, v := range mps {
 		if strings.HasPrefix(path, v.UpSteamPath) {
 			mapped = v

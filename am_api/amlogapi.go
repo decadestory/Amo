@@ -40,9 +40,31 @@ func serveHTTPApi(c *gin.Context) {
 }
 
 func serveHTTPBus(c *gin.Context) {
-	fmt.Println("serveHTTPBus")
+	var data ammodel.LogAmBus
+	err := c.ShouldBind(&data)
+	if err != nil {
+		fmt.Println("error:", err)
+		c.JSON(200, ammodel.Error(err.Error()))
+		return
+	}
+
+	logger.LogBus(data.SrcGId, data.SrcId, data.LogLevel, data.LogType, data.LogPath, data.LogInfo, data.ExtInfo1, data.ExtInfo2)
+	fmt.Println("ok:", data)
+
+	c.JSON(200, ammodel.Ok(data))
 }
 
 func serveHTTPError(c *gin.Context) {
-	fmt.Println("serveHTTPError")
+	var data ammodel.LogAmError
+	err := c.ShouldBind(&data)
+	if err != nil {
+		fmt.Println("error:", err)
+		c.JSON(200, ammodel.Error(err.Error()))
+		return
+	}
+
+	logger.LogError(data.SrcGId, data.SrcId, data.LogLevel, data.LogType, data.LogPath, data.LogInfo, data.ExtInfo1, data.ExtInfo2)
+	fmt.Println("ok:", data)
+
+	c.JSON(200, ammodel.Ok(data))
 }

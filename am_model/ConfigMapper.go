@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type AmConfigMapper struct {
+type AmProxyMapper struct {
 	ID              int `gorm:"primaryKey"`
 	ServiceId       string
 	ServiceName     string
@@ -19,7 +19,7 @@ type AmConfigMapper struct {
 	Enable          bool
 }
 
-// TableName 会将 AmConfigMapper 的表名重写为 `AmConfigMapper`
-func (AmConfigMapper) TableName() string {
-	return "AmConfigMapper"
+// TableName 会将 AmProxyMapper 的表名重写为 `AmProxyMapper`
+func (AmProxyMapper) TableName() string {
+	return "AmProxyMapper"
 }

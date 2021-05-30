@@ -31,14 +31,14 @@ func init() {
 }
 
 // 获取映射
-func GetMssqlAmConfigMapper() []ammodel.AmConfigMapper {
+func GetMssqlAmConfigMapper() []ammodel.AmProxyMapper {
 
 	db, err := gorm.Open(sqlserver.Open(connString), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Open connection failed:", err.Error())
 	}
 
-	var mappers []ammodel.AmConfigMapper
+	var mappers []ammodel.AmProxyMapper
 	db.Limit(10).Order("id asc").Find(&mappers)
 
 	log.Println("获取", len(mappers), "条数据")
