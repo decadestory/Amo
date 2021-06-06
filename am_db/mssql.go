@@ -30,7 +30,7 @@ func init() {
 	log.Println(connString)
 }
 
-// 获取映射
+// GetMssqlAmConfigMapper 获取映射
 func GetMssqlAmConfigMapper() []ammodel.AmProxyMapper {
 
 	db, err := gorm.Open(sqlserver.Open(connString), &gorm.Config{})
@@ -45,7 +45,7 @@ func GetMssqlAmConfigMapper() []ammodel.AmProxyMapper {
 	return mappers
 }
 
-// 添加接口日志
+// AddApiLog 添加接口日志
 func AddApiLog(lg ammodel.LogAmInterface) {
 	db, err := gorm.Open(sqlserver.Open(connString), &gorm.Config{})
 	if err != nil {
@@ -54,7 +54,7 @@ func AddApiLog(lg ammodel.LogAmInterface) {
 	db.Create(&lg)
 }
 
-// 添加业务日志
+// AddBusLog 添加业务日志
 func AddBusLog(lg ammodel.LogAmBus) {
 	db, err := gorm.Open(sqlserver.Open(connString), &gorm.Config{})
 	if err != nil {
@@ -63,11 +63,40 @@ func AddBusLog(lg ammodel.LogAmBus) {
 	db.Create(&lg)
 }
 
-// 添加错误日志
+// AddErrorLog 添加错误日志
 func AddErrorLog(lg ammodel.LogAmError) {
 	db, err := gorm.Open(sqlserver.Open(connString), &gorm.Config{})
 	if err != nil {
 		log.Fatal("Open connection failed:", err.Error())
 	}
 	db.Create(&lg)
+}
+
+// SetConfig 添加或修改主配置
+func SetConfig(cm ammodel.AmConfig) {
+	db, err := gorm.Open(sqlserver.Open(connString), &gorm.Config{})
+	if err != nil {
+		log.Fatal("Open connection failed:", err.Error())
+	}
+	var amc ammodel.AmConfig
+	db.First(&amc, "ConfigCode=?", cm.ConfigCode)
+	fmt.Println("amc -->", amc)
+	if amc.ID == 0 {
+		fmt.Println("not find -- create")
+		db.Create(&cm)
+	} else {
+		fmt.Println("find -- update")
+		db.Model(&cm).Where("ID=?", amc.ID).Updates(cm)
+	}
+}
+
+// GetConfig 获取主配置
+func GetConfig(code string) ammodel.AmConfig {
+	db, err := gorm.Open(sqlserver.Open(connString), &gorm.Config{})
+	if err != nil {
+		log.Fatal("Open connection failed:", err.Error())
+	}
+	var amc ammodel.AmConfig
+	db.First(&amc, "ConfigCode=?", code)
+	return amc
 }
