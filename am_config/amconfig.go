@@ -9,7 +9,10 @@ import (
 // SetConfig 添加修改配置
 func SetConfig(model ammodel.AmConfig) bool {
 
-	model.AddTime = time.Now()
+	now := time.Now()
+	model.AddTime = now
+	model.StartTime = now
+	model.EndTime = now
 	model.IsValid = true
 
 	amdb.SetConfig(model)
