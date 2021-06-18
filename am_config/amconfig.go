@@ -12,7 +12,7 @@ func SetConfig(model ammodel.AmConfig) bool {
 	now := time.Now()
 	model.AddTime = now
 	model.StartTime = now
-	model.EndTime = now
+	model.EndTime = now.AddDate(1000, 0, 0)
 	model.IsValid = true
 
 	amdb.SetConfig(model)
