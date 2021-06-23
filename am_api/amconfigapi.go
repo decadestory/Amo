@@ -24,7 +24,7 @@ func ping_config(c *gin.Context) {
 }
 
 func SetConfig(c *gin.Context) {
-	var data ammodel.AmConfig
+	var data ammodel.AmConfigModel
 	err := c.ShouldBind(&data)
 	if err != nil {
 		fmt.Println("error:", err)
