@@ -14,5 +14,5 @@ func StartAuthApi() {
 }
 
 func ping_auth(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "pong"})
+	c.JSON(0, gin.H{"message": "pong"})
 }

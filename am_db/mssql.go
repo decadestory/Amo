@@ -3,6 +3,7 @@ package amdb
 import (
 	"fmt"
 	"log"
+	"time"
 
 	ammodel "atom_micro/am_model"
 
@@ -81,12 +82,41 @@ func SetConfig(cm ammodel.AmConfig) {
 	var amc ammodel.AmConfig
 	db.First(&amc, "ConfigCode=?", cm.ConfigCode)
 	fmt.Println("amc -->", amc)
+	now := time.Now()
 	if amc.ID == 0 {
+		cm.AddTime = now
+		cm.StartTime = now
+		cm.EndTime = now.AddDate(5000, 0, 0)
+		cm.IsValid = true
 		fmt.Println("not find -- create")
 		db.Create(&cm)
 	} else {
-		fmt.Println("find -- update")
-		db.Model(&cm).Where("ID=?", amc.ID).Updates(cm)
+		fmt.Println("find -- update", cm)
+		cm.AddTime = now
+		umap := map[string]interface{}{
+			"ConfigName":  cm.ConfigName,
+			"ConfigDesc":  cm.ConfigDesc,
+			"ConfigValue": cm.ConfigValue,
+			"ExtValue1":   cm.ExtValue1,
+			"ExtValue2":   cm.ExtValue2,
+			"HasDetail":   cm.HasDetail,
+			"ParentCode":  cm.ParentCode,
+			"DomainID":    cm.DomainID,
+			"AddTime":     cm.AddTime,
+			"IsValid":     cm.IsValid,
+		}
+		if !cm.StartTime.IsZero() {
+			fmt.Println("!StartTime.IsZero")
+			umap["StartTime"] = cm.StartTime
+		}
+
+		if !cm.EndTime.IsZero() {
+			fmt.Println("!EndTime.IsZero")
+			umap["EndTime"] = cm.EndTime
+		}
+
+		db.Model(&cm).Where("ID=?", amc.ID).Updates(umap)
+
 	}
 }
 
@@ -97,6 +127,11 @@ func GetConfig(code string) ammodel.AmConfig {
 		log.Fatal("Open connection failed:", err.Error())
 	}
 	var amc ammodel.AmConfig
-	db.First(&amc, "ConfigCode=?", code)
+	db.First(&amc, "ConfigCode=? and IsValid=1 and getdate() BETWEEN StartTime AND EndTime ", code)
+	fmt.Println("GetConfig -- ", amc)
+	if amc.ID == 0 {
+		panic("配置不存在")
+	}
+
 	return amc
 }
